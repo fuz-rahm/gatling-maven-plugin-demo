@@ -19,13 +19,13 @@ pipeline {
         stage('Checkout from Github') {
         
             steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/mr/addpa11y-ci']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/fuz-rahm/simple-java-maven-app.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/mr/addpa11y-ci']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:fuz-rahm/gatling-maven-plugin-demo.git']]])
             }
         }
 
-        stage ('Unit Test') {
+        stage ('JUnit Unit Test') {
             steps{
-                sh 'mvn clean verify'
+                sh 'mvn clean verif y'
             }
         }
 
@@ -37,13 +37,7 @@ pipeline {
 
             }
         }
-        //stage ('Lighthouse'){
-            //steps{
-                //sh 'lighthouse-batch -s https://cynerge.com'
-                //sh 'ls report/lighthouse'
-                //lighthouseReport './report/lighthouse/cynerge_com.report.json'
-            //}
-        //}
+        
 
         stage('build') {
             steps {
@@ -53,40 +47,23 @@ pipeline {
             }
         }
 
-        //  stage('Pa11y') {
-        //     steps {
-        //          sh 'ls -a'
-        //         sh 'pa11y-ci --config .pa11yci.json'
-        //     }
+        stage('Notification'){
 
-        // }
+            steps {
 
-        // stage('SonarQube analysis') {
-        //     tools {   
-        //         sonarQube 'SonarQube Scanner 4.8'
-        //     }
-        //     steps {
-        //         withSonarQubeEnv('SonarQube Scanner') {
-        //         sh 'sonar-scanner'
-        //         }
-        //     }
-        // }
+                sh label: '', returnStdout: true, script: 'echo "Email Notification"'
+
+             }
+
+        }    
+
+        
     }
 
     post {
         always {
-            archive "target/**/*"
-            junit 'target/surefire-reports/*.xml'
-        }
-        success {
-            mail to:"mrahman@cynerge.com", subject:"SUCCESS: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", body: "Yay, we passed."
-        }
-        failure {
-            mail to:"mahfuzurrahm518@gmail.com", subject:"FAILURE: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", body: "Boo, we failed."
-        }
-        unstable {
-            mail to:"jenkinsemailnotification31@gmail.com", subject:"UNSTABLE: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", body: "Huh, we're unstable."
-        }
-    }     
+           junit '**/reports/junit/*.xml'
+        }     
     
+    }
 }
