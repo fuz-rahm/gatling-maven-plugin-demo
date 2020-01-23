@@ -1,6 +1,6 @@
 gatling-maven-plugin-demo
 =========================
-
+This is a test
 Simple showcase of a maven project using the gatling-maven-plugin.
 
 To test it out, simply execute the following command:
